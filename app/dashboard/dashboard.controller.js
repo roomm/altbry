@@ -6,6 +6,8 @@ angular.module('altbry')
       var userlogged = localStorageService.get('userlogged');
       websocketFactory.send({msg: 'connect', version: '1', support: ['1', 'pre2', 'pre1']});
       websocketFactory.send({msg: 'method', method: 'login', params: [{user: {email: userlogged.user}, password: {digest: userlogged.pass, algorithm: 'sha-256'}}], id: '2'});
+    } else {
+      $state.go('login');
     }
 
     websocketFactory.send({msg: 'sub', id: 'cGwhAYagRg47GLiK5', name: 'activityList', 'params': []});
@@ -26,7 +28,7 @@ angular.module('altbry')
 
     vm.uiConfig = {
       calendar: {
-        height: 600,
+        height: 450,
         editable: true,
         header: {
           left: 'title',
