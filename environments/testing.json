@@ -1,0 +1,6 @@
+{
+  "constants": {
+    "ENV": "testing",
+    "API": "http://api.taggeator.delectame.test"
+  }
+}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+  <!-- build:css(.) styles/vendor.css -->
+  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" href="/bower_components/angular-toastr/dist/angular-toastr.min.css" type="text/css">
+  <link rel="stylesheet" href="/bower_components/angular-loading-bar/build/loading-bar.css"/>
+  <link rel="stylesheet" href="/bower_components/components-font-awesome/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="/bower_components/fullcalendar/dist/fullcalendar.css"/>
+  <!-- endbuild -->
+
+  <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" type="text/css">
+
+  <!-- build:css(.tmp) styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css"/>
+  <link rel="stylesheet" href="styles/buttons.css"/>
+  <link rel="stylesheet" href="styles/login.css"/>
+  <!-- endbuild -->
+
+  <!-- build:js(.) scripts/vendor.js -->
+  <!-- bower:js -->
+  <script src="/bower_components/jquery/dist/jquery.js"></script>
+  <script src="/bower_components/angular/angular.js"></script>
+  <script src="/bower_components/angular-resource/angular-resource.js"></script>
+  <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+  <script src="/bower_components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="/bower_components/angular-animate/angular-animate.js"></script>
+  <script src="/bower_components/angular-touch/angular-touch.js"></script>
+  <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="/bower_components/oclazyload/dist/ocLazyLoad.js"></script>
+  <script src="/bower_components/angular-loading-bar/build/loading-bar.js"></script>
+  <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+  <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+  <script src="/bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
+  <script src="/bower_components/angular-ui-select/dist/select.js"></script>
+  <script src="/bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+  <script src="/bower_components/js-sha256/src/sha256.js"></script>
+  <script src="/bower_components/angular-websocket/dist/angular-websocket.js"></script>
+  <script src="/bower_components/moment/moment.js"></script>
+  <script src="/bower_components/fullcalendar/dist/fullcalendar.js"></script>
+  <script src="/bower_components/angular-ui-calendar/src/calendar.js"></script>
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js({.tmp,app}) scripts/scripts.js -->
+  <script src="app.module.js"></script>
+  <script src="app.config.js"></script>
+  <script src="app.env.js"></script>
+  <script src="factories/websocket.factory.js"></script>
+  <script src="factories/globaldata.service.js"></script>
+  <script src="interceptors/requesterrornotifier.interceptor.js"></script>
+
+  <!-- endbuild -->
+</head>
+
+<body ng-app="altbry">
+<div ui-view></div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+.fa-small {
+  font-size: 0.7em;
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 100%;
+  }
+}
+
+.row-flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.row-flex > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.no-border td {
+  border: none !important;
+}
+
+.odd {
+  background-color: #8694f2;
+  border: none !important;
+}
+
+.even {
+  /*background-color: rgba(255, 235, 2, 0.1);*/
+  border: none !important;
+}
+
+.table-centered td {
+  text-align: center;
+}
+
+.vertical-center {
+  vertical-align: middle !important;
+}
+
+.row.extra-bottom-padding {
+  margin-bottom: 20px;
+}
+
+.well.sentence {
+  background-color: #fff;
+}
+
+.rating-icon {
+  color: lightslategrey;
+}
+
+.rating-wrap {
+  cursor: pointer;
+}
+
+.margin-input {
+  margin-bottom: 15px;
+}
+
+.page-header {
+  margin-top: 10px !important;
+}
+
+.label-lexicon {
+  margin-right: 5px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.margin-down-10 {
+  margin-bottom: 10px;
+}
+
+.img-goal {
+  max-width: 32px;
+}
+
+.btn-nextprev {
+  height: 100%;
+  width: 50%;
+  margin: auto;
+}
+
+.word-container {
+  margin-bottom: 15px;
+}
+
+.word {
+  font-size: 18px;
+  min-height: 100px;
+  margin: 0;
+}
+
+.button-add-container {
+  height: 100px;
+  padding: 0;
+  line-height: 125px;
+}
+
+.button-add {
+  vertical-align: middle;
+  border-radius: 25px;
+  font-weight: bold;
+}
+
+.button-remove {
+  padding: 0 8px;
+  width: 25%;
+}
