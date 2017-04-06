@@ -47,6 +47,9 @@ angular.module('altbry')
     return {
       send: function (msg) {
         dataStream.send(parseSend(msg));
+      },
+      close: function () {
+        dataStream.close();
       }
     };
   });

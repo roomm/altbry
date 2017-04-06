@@ -1,14 +1,17 @@
 angular.module('altbry')
   .controller('navigationController', navigationController);
 
-
-function navigationController($state, globalDataService, $cookieStore) {
+function navigationController($state, globalDataService, localStorageService, websocketFactory) {
   var vm = this;
 
-  // vm.globalData = $cookieStore.get('globals') || {};
-  // globalDataService.setData(vm.globalData);
-
   vm.changeState = changeState;
+  vm.logout = logout;
+
+  function logout() {
+    localStorageService.remove('userlogged');
+    websocketFactory.close();
+    $state.go('login');
+  }
 
   function changeState(state) {
     if (globalDataService.currentUser === undefined) {
