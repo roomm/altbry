@@ -3,10 +3,6 @@ angular.module('altbry')
 
     var dataStream = $websocket('wss://active.brytonsport.com/sockjs/555/a8n4j1b9/websocket');
 
-    var collection = [];
-    var activities = [];
-    var totalActivities = 0;
-
     function replaceAll(target, search, replacement) {
       return target.split(search).join(replacement);
     }
@@ -23,19 +19,10 @@ angular.module('altbry')
       } else if (msg.msg === 'connected') {
         globalDataService.currentUser = msg.session;
       } else if (msg.msg === 'added' && msg.collection === 'userActivities') {
-        totalActivities++;
-        // dataStream.send(parseSend({msg: 'method', method: 'activity.detail.2', params: [msg.id], id: '-1'}));
         globalDataService.addData({id: msg.id, data: msg.fields});
+      } else if (msg.msg === 'result' && msg.id === '-1') {
+        globalDataService.selectedActivity = msg;
       }
-      // else if (msg.msg === 'result' && msg.id === '-1') {
-      //   activities.push(msg.result);
-      //
-      //   if (activities.length === totalActivities) {
-      //     globalDataService.setData(activities);
-      //     dataStream.close();
-      //     console.log('WS CLOSED!!!!');
-      //   }
-      // }
     }
 
     dataStream.onError(function (error) {
@@ -47,7 +34,7 @@ angular.module('altbry')
       if (message.data.length === 1) {
         return;
       }
-      var clean = message.data.replace('a["', '').replace('"]', '');//.replace('\\}"', '"');
+      var clean = message.data.replace('a["', '').replace('"]', '');
       var msg = replaceAll(clean, '\\"', '"');
       try {
         parseReceivedMessage(JSON.parse(msg));
@@ -58,8 +45,6 @@ angular.module('altbry')
     });
 
     return {
-      collection: collection,
-      activities: activities,
       send: function (msg) {
         dataStream.send(parseSend(msg));
       }

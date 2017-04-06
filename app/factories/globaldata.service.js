@@ -5,7 +5,7 @@ angular.module('altbry')
 
     globalData.currentUser = undefined;
     globalData.activityList = [];
-
+    globalData.selectedActivity = undefined;
 
     globalData.setData = function (data) {
       globalData.activityList = data;
