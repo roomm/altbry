@@ -2,12 +2,6 @@
   font-size: 0.7em;
 }
 
-@media (min-width: 1200px) {
-  .container {
-    width: 100%;
-  }
-}
-
 .row-flex {
   display: -webkit-box;
   display: -webkit-flex;
