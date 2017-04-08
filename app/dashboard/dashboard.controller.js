@@ -1,7 +1,222 @@
 angular.module('altbry')
-  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService) {
+  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService, NgMap) {
     var vm = this;
 
+    // Global variables
+    vm.calendarActivityList = [[]];
+    vm.selectedSummary = undefined;
+    vm.summaryFields = [
+      {
+        field: 'total_elapsed_time',
+        icon: '/images/icons/chrono.png',
+        name: 'duracion',
+        transform: function (value) {
+          var date = new Date(null);
+          date.setSeconds(value);
+          return date.toISOString().substr(11, 8);
+        },
+        units: ''
+      },
+      {
+        field: 'total_moving_time',
+        icon: '/images/icons/chrono.png',
+        name: 'tiempo en mov.',
+        transform: function (value) {
+          var date = new Date(null);
+          date.setSeconds(value);
+          return date.toISOString().substr(11, 8);
+        },
+        units: ''
+      },
+      {
+        field: 'total_distance',
+        icon: '/images/icons/distance.png',
+        name: 'distancia',
+        transform: function (value) {
+          var dist = value / 1000;
+          return Math.round(dist * 100) / 100;
+        },
+        units: 'Km'
+      },
+      {
+        field: 'avg_speed',
+        icon: '/images/icons/speedavg.png',
+        name: 'vel. media',
+        transform: function (value) {
+          var vel = value * 3.6;
+          return Math.round(vel * 100) / 100;
+        },
+        units: 'Km/h'
+      },
+      {
+        field: 'max_speed',
+        icon: '/images/icons/speedmax.png',
+        name: 'vel. max.',
+        transform: function (value) {
+          var vel = value * 3.6;
+          return Math.round(vel * 100) / 100;
+        },
+        units: 'Km/h'
+      },
+      {
+        field: 'avg_heart_rate',
+        icon: '/images/icons/heartrate.png',
+        name: 'fc media',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'max_heart_rate',
+        icon: '/images/icons/heartrate.png',
+        name: 'fc max.',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'avg_cadence',
+        icon: '',
+        name: 'cadencia med.',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'avg_running_cadence',
+        icon: '',
+        name: 'cadencia med. mov.',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'max_cadence',
+        icon: '',
+        name: 'cadencia max.',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'max_running_cadence',
+        icon: '',
+        name: 'cadencia max. mov.',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'avg_power',
+        icon: '',
+        name: 'potencia med.',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'max_power',
+        icon: '',
+        name: 'potencia max.',
+        transform: function (value) {
+          return value;
+        },
+        units: ''
+      },
+      {
+        field: 'total_ascent',
+        icon: '/images/icons/hillup.png',
+        name: 'ascenso',
+        transform: function (value) {
+          return value;
+        },
+        units: 'm'
+      },
+      {
+        field: 'total_descent',
+        icon: '/images/icons/hilldown.png',
+        name: 'descenso',
+        transform: function (value) {
+          return value;
+        },
+        units: 'm'
+      },
+      {
+        field: 'max_altitude',
+        icon: '/images/icons/altitudemax.png',
+        name: 'altitud máx.',
+        transform: function (value) {
+          return Math.round(value * 100) / 100;
+        },
+        units: 'm'
+      },
+      {
+        field: 'min_altitude',
+        icon: '/images/icons/altitudemin.png',
+        name: 'altitud mín',
+        transform: function (value) {
+          return Math.round(value * 100) / 100;
+        },
+        units: 'm'
+      },
+      {
+        field: 'max_temperature',
+        icon: '/images/icons/tempmax.png',
+        name: 'temp. máx',
+        transform: function (value) {
+          return value;
+        },
+        units: 'ºC'
+      },
+      {
+        field: 'min_temperature',
+        icon: '/images/icons/tempmin.png',
+        name: 'temp. mín.',
+        transform: function (value) {
+          return value;
+        },
+        units: 'ºC'
+      },
+      {
+        field: 'avg_temperature',
+        icon: '/images/icons/tempavg.png',
+        name: 'temp. media',
+        transform: function (value) {
+          return value;
+        },
+        units: 'ºC'
+      },
+      {
+        field: 'total_calories',
+        icon: '/images/icons/calories.png',
+        name: 'calorías',
+        transform: function (value) {
+          return value;
+        },
+        units: 'Kcal'
+      }
+      // 'uphill_time',
+      // 'uphill_dist',
+      // 'uphill_avg_speed',
+      // 'uphill_grade',
+      // 'uphill_avg_bpm',
+      // 'uphill_avg_rpm',
+      // 'downhill_time',
+      // 'downhill_dist',
+      // 'downhill_avg_speed',
+      // 'downhill_grade',
+      // 'downhill_avg_bpm',
+      // 'downhill_avg_rpm'
+    ];
+
+    // User Logging data check
     if (localStorageService.get('userlogged')) {
       var userlogged = localStorageService.get('userlogged');
       websocketFactory.send({msg: 'connect', version: '1', support: ['1', 'pre2', 'pre1']});
@@ -10,30 +225,33 @@ angular.module('altbry')
       $state.go('login');
     }
 
+    // Get Activity List (for calendar)
     websocketFactory.send({msg: 'sub', id: 'cGwhAYagRg47GLiK5', name: 'activityList', 'params': []});
 
+    // Every received activity is pushed to calendar
     $scope.$watchCollection(function () {
       return globalDataService.activityList;
     }, function (newNames, oldNames) {
       globalDataService.activityList.forEach(function (item) {
-        var activity = {title: item.data.name, start: new Date(item.data.local_start_time * 1000), id: item.id, stick: true};
-        if (!containsObject(activity, vm.calendarActivityList[0])) {
+        var activity = {title: item.data.name, start: new Date(item.data.local_start_time * 1000), id: item.id, summary: item.data.summary, stick: true};
+        if (!globalDataService.containsObject(activity, vm.calendarActivityList[0])) {
           vm.calendarActivityList[0].push(activity);
         }
       });
     });
 
-
+    // Received activity details
     $scope.$watch(function () {
       return globalDataService.selectedActivity;
     }, function (newValue, oldValue) {
       console.log('selected from controller', globalDataService.selectedActivity);
+      if (newValue !== undefined) {
+        vm.loadMap();
+      }
     });
 
-
-    vm.calendarActivityList = [[]];
-
-    vm.uiConfig = {
+    // Calendar config
+    vm.calendarConfig = {
       calendar: {
         firstDay: 1,
         monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -47,39 +265,52 @@ angular.module('altbry')
           right: 'today prev,next'
         },
         buttonText: {
-          today:    'hoy',
-          month:    'mes',
-          week:     'semana',
-          day:      'día',
-          list:     'lista'
+          today: 'hoy',
+          month: 'mes',
+          week: 'semana',
+          day: 'día',
+          list: 'lista'
         },
 
-        eventClick: eventClicked
-        // eventDrop: $scope.alertOnDrop,
-        // eventResize: $scope.alertOnResize,
-        // eventRender: $scope.eventRender
+        eventClick: function (date, jsEvent, view) {
+          vm.selectedSummary = date.summary;
+          websocketFactory.send({msg: 'method', method: 'activity.detail.2', params: [date.id], id: '-1'});
+        }
       }
     };
 
+    // Map Config
+    vm.mapConfig = {
+      center: undefined,
+      routePoints: []
+    };
 
-    vm.eventClicked = eventClicked;
 
+    vm.fieldFilter = fieldFilter;
+    vm.loadMap = loadMap;
 
-    function eventClicked(date, jsEvent, view) {
-      console.log('get activity');
-      websocketFactory.send({msg: 'method', method: 'activity.detail.2', params: [date.id], id: '-1'});
+    function fieldFilter(item) {
+      return item.transform(vm.selectedSummary[item.field]) !== 0;
     }
 
+    function loadMap() {
 
-    function containsObject(obj, list) {
-      var i;
-      for (i = 0; i < list.length; i++) {
-        if (list[i].id === obj.id) {
-          return true;
+      var totalSamples = globalDataService.selectedActivity.result.samples.length;
+      var indexCenter = Math.round(totalSamples / 2);
+      var initialLat = globalDataService.selectedActivity.result.samples[indexCenter].position_lat;
+      var initialLng = globalDataService.selectedActivity.result.samples[indexCenter].position_long;
+      vm.mapConfig.center = initialLat + ', ' + initialLng;
+      vm.mapConfig.routePoints = [];
+      var points = [];
+      globalDataService.selectedActivity.result.samples.forEach(function (item) {
+        if (item.hasOwnProperty('position_lat')) {
+          points.push([item.position_lat, item.position_long]);
         }
-      }
+      });
 
-      return false;
+      vm.mapConfig.routePoints = points;
+
     }
 
   });
+

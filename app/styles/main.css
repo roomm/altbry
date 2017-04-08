@@ -21,6 +21,45 @@
 .row.extra-bottom-padding {
   margin-bottom: 20px;
 }
-.logout-button{
+
+.logout-button {
   cursor: pointer;
+}
+
+.summary-field-wrapper {
+  padding: 5px;
+}
+
+.summary-field-icon {
+  float: left;
+  display: table;
+  height: 2.7rem;
+  font-size: 17px;
+}
+.summary-icon{
+  width: 12px;
+}
+
+.summary-field-values {
+  display: table;
+  margin-left: 20px;
+}
+
+.summary-field-name {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #b3b3b3;
+  width: 100%;
+  overflow: visible;
+  white-space: nowrap;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.summary-field-value {
+  font-size: 1.3rem;
+  height: 1.3rem;
+  font-weight: 400;
+  white-space: nowrap;
+  line-height: 1;
 }

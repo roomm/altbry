@@ -1,18 +1,45 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-7">
-      <div ui-calendar="vm.uiConfig.calendar" class="span8 calendar" ng-model="vm.calendarActivityList">
+    <div class=" col-sm-12 col-md-8 col-md-offset-2">
+      <div ui-calendar="vm.calendarConfig.calendar" class="span8 calendar" ng-model="vm.calendarActivityList">
       </div>
     </div>
-    <div class="col-md-5">
+  </div>
+  <div class="row" style="margin-top: 15px" ng-if="vm.selectedSummary!==undefined">
+    <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title">Calendario</h4>
+          <h4 class="panel-title">Resumen</h4>
         </div>
         <div class="panel-body">
           <div class="row">
-            <div class="col-md-12">
-
+            <!--SUMMARY WRAPPER-->
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-sm-6 col-md-4" ng-repeat="field in vm.summaryFields | filter: vm.fieldFilter track by $index">
+                  <div class="summary-field-wrapper">
+                    <div class="summary-field-icon">
+                      <img class="summary-icon" ng-src="{{field.icon}}"/>
+                    </div>
+                    <div class="summary-field-values">
+                      <div class="summary-field-name">{{field.name}}</div>
+                      <div class="summary-field-value">{{field.transform(vm.selectedSummary[field.field])}} {{field.units}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--MAP-->
+            <div class="col-md-7">
+              <ng-map zoom="12" center="{{vm.mapConfig.center}}" default-style="true" ng-if="vm.mapConfig.routePoints.length>0">
+                <shape name="polyline"
+                       path="{{vm.mapConfig.routePoints}}"
+                       geodesic="true"
+                       stroke-color="#FF0000"
+                       stroke-opacity="1.0"
+                       stroke-weight="2">
+                </shape>
+              </ng-map>
             </div>
           </div>
         </div>

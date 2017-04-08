@@ -21,6 +21,7 @@ angular.module('altbry', [
   'ui.select',
   'ngSanitize',
   'ngWebSocket',
-  'ui.calendar'
+  'ui.calendar',
+  'ngMap'
 ]);
 
