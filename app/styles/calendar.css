@@ -1,3 +1,6 @@
 .fc-row .fc-bg {
   background-color: #FFF;
 }
+.fc-event-container{
+  cursor: pointer;
+}

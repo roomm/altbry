@@ -247,6 +247,7 @@ angular.module('altbry')
       console.log('selected from controller', globalDataService.selectedActivity);
       if (newValue !== undefined) {
         vm.loadMap();
+        vm.loadMainChart();
       }
     });
 
@@ -285,16 +286,73 @@ angular.module('altbry')
       routePoints: []
     };
 
+    vm.mainAnalysisChartConfig = {
+      xAxis: {
+        tickInterval: 50,
+        allowDecimals: true,
+        categories: []
+      },
+      yAxis: [
+        {
+          title: {
+            text: 'Altura'
+          },
+          labels: {
+            format: '{value} m'
+          }
+        },
+        {
+          title: {
+            text: 'Frecuencia Cardiaca'
+          },
+          labels: {
+            format: '{value} bpm'
+          },
+          opposite: true
+        }
+      ],
+      tooltip: {
+        shared: true
+      },
+      plotOptions: {
+        area: {
+          pointStart: 0,
+          marker: {
+            enabled: false
+
+          }
+        },
+        line: {
+          marker: {
+            enabled: false
+          }
+        }
+      },
+      series: [
+        {
+          type: 'area',
+          name: 'Altura',
+          data: []
+
+        },
+        {
+          yAxis: 1,
+          type: 'line',
+          name: 'Ritmo cardíaco',
+          data: []
+        }
+      ]
+    };
 
     vm.fieldFilter = fieldFilter;
     vm.loadMap = loadMap;
+    vm.loadMainChart = loadMainChart;
 
     function fieldFilter(item) {
       return item.transform(vm.selectedSummary[item.field]) !== 0;
     }
 
     function loadMap() {
-
       var totalSamples = globalDataService.selectedActivity.result.samples.length;
       var indexCenter = Math.round(totalSamples / 2);
       var initialLat = globalDataService.selectedActivity.result.samples[indexCenter].position_lat;
@@ -307,8 +365,32 @@ angular.module('altbry')
           points.push([item.position_lat, item.position_long]);
         }
       });
-
       vm.mapConfig.routePoints = points;
+    }
+
+    function loadMainChart() {
+      var altitude = [];
+      var hr = [];
+      var xaxis = [];
+      globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
+        xaxis.push(Math.round((item.distance / 1000) * 100) / 100);
+        if (item.hasOwnProperty('altitude')) {
+          altitude.push(item.altitude);
+        } else {
+          var alt = altitude[index - 1];
+          if (alt === undefined) {
+            alt = 0;
+          }
+          altitude.push(alt);
+        }
+        if (item.hasOwnProperty('heart_rate')) {
+          hr.push(item.heart_rate);
+        }
+      });
+      vm.mainAnalysisChartConfig.xAxis.categories = xaxis;
+      vm.mainAnalysisChartConfig.series[0].data = altitude;
+      vm.mainAnalysisChartConfig.series[1].data = hr;
+
 
     }
 

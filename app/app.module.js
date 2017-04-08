@@ -22,6 +22,7 @@ angular.module('altbry', [
   'ngSanitize',
   'ngWebSocket',
   'ui.calendar',
-  'ngMap'
+  'ngMap',
+  'highcharts-ng'
 ]);
 

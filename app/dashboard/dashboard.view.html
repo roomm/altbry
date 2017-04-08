@@ -46,6 +46,20 @@
       </div>
     </div>
   </div>
-
+  <div class="row" ng-if="vm.selectedSummary!==undefined">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">Analisis</h4>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-12">
+              <highchart id="mainAnalysis" config="vm.mainAnalysisChartConfig"></highchart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-

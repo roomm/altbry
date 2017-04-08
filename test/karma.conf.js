@@ -41,6 +41,7 @@ module.exports = function(config) {
       'bower_components/fullcalendar/dist/fullcalendar.js',
       'bower_components/angular-ui-calendar/src/calendar.js',
       'bower_components/ngmap/build/scripts/ng-map.js',
+      'bower_components/highcharts-ng/dist/highcharts-ng.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/angular-scenario/angular-scenario.js',
       // endbower
