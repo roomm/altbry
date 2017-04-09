@@ -287,7 +287,16 @@ angular.module('altbry')
     };
 
     vm.mainAnalysisChartConfig = {
+      chart: {
+        zoomType: 'xy'
+      },
+      title: {
+        text: ''
+      },
       xAxis: {
+        labels: {
+          format: '{value} km'
+        },
         tickInterval: 50,
         allowDecimals: true,
         categories: []
@@ -299,14 +308,24 @@ angular.module('altbry')
           },
           labels: {
             format: '{value} m'
-          }
+          },
+          opposite: false
         },
         {
           title: {
             text: 'Frecuencia Cardiaca'
           },
           labels: {
-            format: '{value} bpm'
+            format: '{value} bmp'
+          },
+          opposite: true
+        },
+        {
+          title: {
+            text: 'Velocidad'
+          },
+          labels: {
+            format: '{value} Km/h'
           },
           opposite: true
         }
@@ -314,32 +333,32 @@ angular.module('altbry')
       tooltip: {
         shared: true
       },
-      plotOptions: {
-        area: {
-          pointStart: 0,
-          marker: {
-            enabled: false
-
-          }
-        },
-        line: {
-          marker: {
-            enabled: false
-          }
-        }
-      },
       series: [
         {
           type: 'area',
           name: 'Altura',
-          data: []
-
+          data: [],
+          tooltip: {
+            valueSuffix: ' m'
+          }
         },
         {
           yAxis: 1,
           type: 'line',
           name: 'Ritmo cardíaco',
-          data: []
+          data: [],
+          tooltip: {
+            valueSuffix: ' bmp'
+          }
+        },
+        {
+          yAxis: 2,
+          type: 'line',
+          name: 'Velocidad',
+          data: [],
+          tooltip: {
+            valueSuffix: ' Km/h'
+          }
         }
       ]
     };
@@ -371,11 +390,13 @@ angular.module('altbry')
     function loadMainChart() {
       var altitude = [];
       var hr = [];
+      var speed = [];
       var xaxis = [];
       globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
         xaxis.push(Math.round((item.distance / 1000) * 100) / 100);
+        // Add altitude to chart
         if (item.hasOwnProperty('altitude')) {
-          altitude.push(item.altitude);
+          altitude.push(Math.round(item.altitude * 100) / 100);
         } else {
           var alt = altitude[index - 1];
           if (alt === undefined) {
@@ -383,13 +404,31 @@ angular.module('altbry')
           }
           altitude.push(alt);
         }
+        // Add HeartRate to chart
         if (item.hasOwnProperty('heart_rate')) {
           hr.push(item.heart_rate);
+        } else {
+          var ahr = hr[index - 1];
+          if (ahr === undefined) {
+            ahr = 0;
+          }
+          hr.push(ahr);
+        }
+        // Add speed to chart
+        if (item.hasOwnProperty('speed')) {
+          speed.push(Math.round((item.speed * 3.6) * 100) / 100);
+        } else {
+          var aspeed = speed[index - 1];
+          if (aspeed === undefined) {
+            aspeed = 0;
+          }
+          speed.push(aspeed);
         }
       });
       vm.mainAnalysisChartConfig.xAxis.categories = xaxis;
       vm.mainAnalysisChartConfig.series[0].data = altitude;
       vm.mainAnalysisChartConfig.series[1].data = hr;
+      vm.mainAnalysisChartConfig.series[2].data = speed;
 
 
     }
