@@ -294,9 +294,6 @@ angular.module('altbry')
         text: ''
       },
       xAxis: {
-        labels: {
-          format: '{value} km'
-        },
         tickInterval: 50,
         allowDecimals: true,
         categories: []
@@ -392,8 +389,14 @@ angular.module('altbry')
       var hr = [];
       var speed = [];
       var xaxis = [];
+
+      var startTime = globalDataService.selectedActivity.result.samples[0].timestamp;
+
       globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
-        xaxis.push(Math.round((item.distance / 1000) * 100) / 100);
+        var time = item.timestamp - startTime;
+        var date = new Date(null);
+        date.setSeconds(time);
+        xaxis.push(date.toISOString().substr(11, 8));
         // Add altitude to chart
         if (item.hasOwnProperty('altitude')) {
           altitude.push(Math.round(item.altitude * 100) / 100);
