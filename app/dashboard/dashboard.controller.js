@@ -248,6 +248,7 @@ angular.module('altbry')
       if (newValue !== undefined) {
         vm.loadMap();
         vm.loadMainChart();
+        vm.loadHeartRateChart();
       }
     });
 
@@ -286,6 +287,7 @@ angular.module('altbry')
       routePoints: []
     };
 
+    // Main Chart Config
     vm.mainAnalysisChartConfig = {
       chart: {
         zoomType: 'xy'
@@ -360,9 +362,49 @@ angular.module('altbry')
       ]
     };
 
+    //Heartrate Config
+    vm.heartRateChartConfig = {
+      chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+      },
+      title: {
+        text: ''
+      },
+      tooltip: {
+        pointFormat: '<b>{point.percentage:.1f}%</b>'
+      },
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Frecuencia cardiaca',
+          colorByPoint: true,
+          data: [
+            {name: 'Zona 1', y: null, color: '#FFA8A3'},
+            {name: 'Zona 2', y: null, color: '#F77D76'},
+            {name: 'Zona 3', y: null, color: '#EF554C'},
+            {name: 'Zona 4', y: null, color: '#E72F25'},
+            {name: 'Zona 5', y: null, color: '#E00C00'}
+          ]
+
+        }]
+    };
+
     vm.fieldFilter = fieldFilter;
     vm.loadMap = loadMap;
     vm.loadMainChart = loadMainChart;
+    vm.loadHeartRateChart = loadHeartRateChart;
 
     function fieldFilter(item) {
       return item.transform(vm.selectedSummary[item.field]) !== 0;
@@ -433,6 +475,44 @@ angular.module('altbry')
       vm.mainAnalysisChartConfig.series[1].data = hr;
       vm.mainAnalysisChartConfig.series[2].data = speed;
 
+
+    }
+
+    function loadHeartRateChart() {
+      var zones = {
+        zone1: [],
+        zone2: [],
+        zone3: [],
+        zone4: [],
+        zone5: []
+      };
+
+      var maxHR = globalDataService.selectedActivity.result.vendor.performance.mhr;
+      var count = 0;
+
+      globalDataService.selectedActivity.result.samples.forEach(function (item) {
+        if (item.hasOwnProperty('heart_rate')) {
+          var hr = item.heart_rate;
+          count++;
+          var hrPrcent = (hr / maxHR) * 100;
+          if (hrPrcent < 60) {
+            zones.zone1.push(hr);
+          } else if (hrPrcent >= 60 && hrPrcent < 70) {
+            zones.zone2.push(hr);
+          } else if (hrPrcent >= 70 && hrPrcent < 80) {
+            zones.zone3.push(hr);
+          } else if (hrPrcent >= 80 && hrPrcent < 90) {
+            zones.zone4.push(hr);
+          } else if (hrPrcent >= 90 && hrPrcent < 110) {
+            zones.zone5.push(hr);
+          }
+        }
+      });
+      vm.heartRateChartConfig.series[0].data[0].y = Math.round(((zones.zone1.length / count) * 100) * 100) / 100;
+      vm.heartRateChartConfig.series[0].data[1].y = Math.round(((zones.zone2.length / count) * 100) * 100) / 100;
+      vm.heartRateChartConfig.series[0].data[2].y = Math.round(((zones.zone3.length / count) * 100) * 100) / 100;
+      vm.heartRateChartConfig.series[0].data[3].y = Math.round(((zones.zone4.length / count) * 100) * 100) / 100;
+      vm.heartRateChartConfig.series[0].data[4].y = Math.round(((zones.zone5.length / count) * 100) * 100) / 100;
 
     }
 
