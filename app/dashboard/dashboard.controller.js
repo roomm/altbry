@@ -374,7 +374,17 @@ angular.module('altbry')
         text: ''
       },
       tooltip: {
-        pointFormat: '<b>{point.percentage:.1f}%</b>'
+        // pointFormat: '<b>{point.percentage:.1f}%</b>'
+        pointFormatter: function () {
+          var time = vm.selectedSummary.total_elapsed_time;
+          time = Math.round(time * (this.percentage)) / 100;
+          var date = new Date(null);
+          date.setSeconds(time);
+          time = date.toISOString().substr(11, 8);
+
+          return 'Porcentaje: <b>' + Math.round(this.percentage * 100) / 100 + '</b><br>' +
+            'Tiempo: <b>' + time + '</b>';
+        }
       },
       plotOptions: {
         pie: {
@@ -382,7 +392,7 @@ angular.module('altbry')
           cursor: 'pointer',
           dataLabels: {
             enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
           }
         }
       },
@@ -391,11 +401,11 @@ angular.module('altbry')
           name: 'Frecuencia cardiaca',
           colorByPoint: true,
           data: [
-            {name: 'Zona 1', y: null, color: '#FFA8A3'},
-            {name: 'Zona 2', y: null, color: '#F77D76'},
-            {name: 'Zona 3', y: null, color: '#EF554C'},
-            {name: 'Zona 4', y: null, color: '#E72F25'},
-            {name: 'Zona 5', y: null, color: '#E00C00'}
+            {name: 'Zona 1', y: null, color: '#ffa8a3'},
+            {name: 'Zona 2', y: null, color: '#f77d76'},
+            {name: 'Zona 3', y: null, color: '#ef554c'},
+            {name: 'Zona 4', y: null, color: '#e72f25'},
+            {name: 'Zona 5', y: null, color: '#a80c00'}
           ]
 
         }]
