@@ -1,5 +1,5 @@
 angular.module('altbry')
-  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService, NgMap) {
+  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService, globalFunctions) {
     var vm = this;
 
     // Global variables
@@ -11,9 +11,7 @@ angular.module('altbry')
         icon: '/images/icons/chrono.png',
         name: 'duracion',
         transform: function (value) {
-          var date = new Date(null);
-          date.setSeconds(value);
-          return date.toISOString().substr(11, 8);
+          return globalFunctions.formatSeconds(value);
         },
         units: ''
       },
@@ -22,9 +20,7 @@ angular.module('altbry')
         icon: '/images/icons/chrono.png',
         name: 'tiempo en mov.',
         transform: function (value) {
-          var date = new Date(null);
-          date.setSeconds(value);
-          return date.toISOString().substr(11, 8);
+          return globalFunctions.formatSeconds(value);
         },
         units: ''
       },
@@ -378,9 +374,7 @@ angular.module('altbry')
         pointFormatter: function () {
           var time = vm.selectedSummary.total_elapsed_time;
           time = Math.round(time * (this.percentage)) / 100;
-          var date = new Date(null);
-          date.setSeconds(time);
-          time = date.toISOString().substr(11, 8);
+          time = globalFunctions.formatSeconds(time);
 
           return 'Porcentaje: <b>' + Math.round(this.percentage * 100) / 100 + '</b><br>' +
             'Tiempo: <b>' + time + '</b>';
@@ -415,6 +409,7 @@ angular.module('altbry')
     vm.loadMap = loadMap;
     vm.loadMainChart = loadMainChart;
     vm.loadHeartRateChart = loadHeartRateChart;
+    vm.loadRhythmChart = loadRhythmChart;
 
     function fieldFilter(item) {
       return item.transform(vm.selectedSummary[item.field]) !== 0;
@@ -446,9 +441,7 @@ angular.module('altbry')
 
       globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
         var time = item.timestamp - startTime;
-        var date = new Date(null);
-        date.setSeconds(time);
-        xaxis.push(date.toISOString().substr(11, 8));
+        xaxis.push(globalFunctions.formatSeconds(time));
         // Add altitude to chart
         if (item.hasOwnProperty('altitude')) {
           altitude.push(Math.round(item.altitude * 100) / 100);
@@ -524,6 +517,12 @@ angular.module('altbry')
       vm.heartRateChartConfig.series[0].data[3].y = Math.round(((zones.zone4.length / count) * 100) * 100) / 100;
       vm.heartRateChartConfig.series[0].data[4].y = Math.round(((zones.zone5.length / count) * 100) * 100) / 100;
 
+    }
+
+    function loadRhythmChart() {
+      globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
+
+      });
     }
 
   });
