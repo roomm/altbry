@@ -245,6 +245,7 @@ angular.module('altbry')
         vm.loadMap();
         vm.loadMainChart();
         vm.loadHeartRateChart();
+        vm.loadRhythmChart();
       }
     });
 
@@ -405,6 +406,39 @@ angular.module('altbry')
         }]
     };
 
+    vm.rhythmChartConfig = {
+      title: {
+        text: ''
+      },
+      xAxis: {
+        // tickInterval: 50,
+        allowDecimals: true,
+        categories: []
+      },
+      yAxis: [
+        {
+          title: {
+            text: 'Ritmo'
+          },
+          labels: {
+            formatter: function () {
+              return globalFunctions.formatSeconds(this.value);
+            }
+          }
+        }
+      ],
+      tooltip: {
+        shared: true
+      },
+      series: [
+        {
+          type: 'column',
+          name: 'Ritmo',
+          data: []
+        }
+      ]
+    };
+
     vm.fieldFilter = fieldFilter;
     vm.loadMap = loadMap;
     vm.loadMainChart = loadMainChart;
@@ -520,9 +554,32 @@ angular.module('altbry')
     }
 
     function loadRhythmChart() {
-      globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
+      var previousPoint = null;
+      var rythms = [];
+      var altitude = [];
+      var previousDistance = 0;
 
+      globalDataService
+        .selectedActivity.result.samples.forEach(function (item, index) {
+        if (!item.hasOwnProperty('distance')) {
+          return;
+        }
+
+        if (previousPoint === null) {
+          previousPoint = item;
+        } else {
+          var distance = Math.round(item.distance / 1000);
+          if (distance > previousDistance) {
+            var time = item.timestamp - previousPoint.timestamp;
+            rythms.push(time);
+            previousPoint = null;
+            previousDistance = distance;
+          }
+        }
       });
+      // vm.rhythmChartConfig.xAxis.categories = xaxis;
+
+      vm.rhythmChartConfig.series[0].data = rythms;
     }
 
   });
