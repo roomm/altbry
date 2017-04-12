@@ -225,7 +225,7 @@ angular.module('altbry')
     // watch for bad login
     $scope.$watch(function () {
       return globalDataService.currentUser;
-    }, function (newValue, oldValue) {
+    }, function (newValue) {
       if (newValue !== undefined && newValue.startsWith('LOGIN_ERROR')) {
         localStorageService.remove('userlogged');
         localStorageService.remove('autologin');
@@ -243,7 +243,7 @@ angular.module('altbry')
     // Every received activity is pushed to calendar
     $scope.$watchCollection(function () {
       return globalDataService.activityList;
-    }, function (newNames, oldNames) {
+    }, function () {
       globalDataService.activityList.forEach(function (item) {
         var activity = {title: item.data.name, start: new Date(item.data.local_start_time * 1000), id: item.id, summary: item.data.summary, stick: true};
         if (!globalDataService.containsObject(activity, vm.calendarActivityList[0])) {
@@ -255,7 +255,7 @@ angular.module('altbry')
     // Received activity details
     $scope.$watch(function () {
       return globalDataService.selectedActivity;
-    }, function (newValue, oldValue) {
+    }, function (newValue) {
       console.log('selected', globalDataService.selectedActivity);
       if (newValue !== undefined) {
         vm.loadMap();
@@ -287,7 +287,7 @@ angular.module('altbry')
           list: 'lista'
         },
 
-        eventClick: function (date, jsEvent, view) {
+        eventClick: function (date) {
           vm.selectedSummary = date.summary;
           websocketFactory.send({msg: 'method', method: 'activity.detail.2', params: [date.id], id: '-1'});
         }
@@ -429,12 +429,20 @@ angular.module('altbry')
       xAxis: {
         // tickInterval: 50,
         allowDecimals: true,
-        categories: []
+        categories: [],
+        labels: {
+          formatter: function () {
+            if (this.isLast === true) {
+              return '<' + (this.value + 1);
+            }
+            return this.value + 1;
+          }
+        }
       },
       yAxis: [
         {
           title: {
-            text: 'Ritmo'
+            text: 'Tiempo'
           },
           labels: {
             formatter: function () {
@@ -444,7 +452,14 @@ angular.module('altbry')
         }
       ],
       tooltip: {
-        shared: true
+        formatter: function () {
+          var time = globalFunctions.formatSeconds(this.y);
+          var speed = 1 / (this.y / 3600);
+          speed = Math.round(speed * 100) / 100;
+
+          return 'Tiempo: <b>' + time + '</b><br>' +
+            'Velocidad: <b>' + speed + ' Km/h</b>';
+        }
       },
       series: [
         {
@@ -572,11 +587,7 @@ angular.module('altbry')
     function loadRhythmChart() {
       var previousPoint = null;
       var rythms = [];
-      var altitude = [];
-      var previousDistance = 0;
-
-      globalDataService
-        .selectedActivity.result.samples.forEach(function (item, index) {
+      globalDataService.selectedActivity.result.samples.forEach(function (item) {
         if (!item.hasOwnProperty('distance')) {
           return;
         }
@@ -584,17 +595,15 @@ angular.module('altbry')
         if (previousPoint === null) {
           previousPoint = item;
         } else {
-          var distance = Math.round(item.distance / 1000);
-          if (distance > previousDistance) {
-            var time = item.timestamp - previousPoint.timestamp;
-            rythms.push(time);
+          if (item.distance - previousPoint.distance > 1000) {
+            rythms.push(item.timestamp - previousPoint.timestamp);
             previousPoint = null;
-            previousDistance = distance;
           }
         }
       });
-      // vm.rhythmChartConfig.xAxis.categories = xaxis;
 
+      var lastItem = globalDataService.selectedActivity.result.samples[globalDataService.selectedActivity.result.samples.length - 1];
+      rythms.push(lastItem.timestamp - previousPoint.timestamp);
       vm.rhythmChartConfig.series[0].data = rythms;
     }
 
