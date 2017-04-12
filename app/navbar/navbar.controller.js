@@ -9,6 +9,7 @@ function navigationController($state, globalDataService, localStorageService, we
 
   function logout() {
     localStorageService.remove('userlogged');
+    localStorageService.remove('autologin');
     websocketFactory.close();
     $state.go('login');
   }
