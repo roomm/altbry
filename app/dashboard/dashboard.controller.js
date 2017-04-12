@@ -212,6 +212,7 @@ angular.module('altbry')
       // 'downhill_avg_rpm'
     ];
 
+    //<editor-fold desc="LOGIN">
     // User Logging data check
     if (localStorageService.get('userlogged')) {
       var userlogged = localStorageService.get('userlogged');
@@ -220,6 +221,21 @@ angular.module('altbry')
     } else {
       $state.go('login');
     }
+
+    // watch for bad login
+    $scope.$watch(function () {
+      return globalDataService.currentUser;
+    }, function (newValue, oldValue) {
+      if (newValue !== undefined && newValue.startsWith('LOGIN_ERROR')) {
+        localStorageService.remove('userlogged');
+        localStorageService.remove('autologin');
+        localStorageService.set('error_login', newValue);
+        $state.go('login');
+      } else {
+        localStorageService.remove('error_login');
+      }
+    });
+    //</editor-fold>
 
     // Get Activity List (for calendar)
     websocketFactory.send({msg: 'sub', id: 'cGwhAYagRg47GLiK5', name: 'activityList', 'params': []});
@@ -240,7 +256,7 @@ angular.module('altbry')
     $scope.$watch(function () {
       return globalDataService.selectedActivity;
     }, function (newValue, oldValue) {
-      console.log('selected from controller', globalDataService.selectedActivity);
+      console.log('selected', globalDataService.selectedActivity);
       if (newValue !== undefined) {
         vm.loadMap();
         vm.loadMainChart();

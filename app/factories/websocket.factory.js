@@ -18,6 +18,8 @@ angular.module('altbry')
         dataStream.send(parseSend({msg: 'pong'}));
       } else if (msg.msg === 'connected') {
         globalDataService.currentUser = msg.session;
+      } else if (msg.msg === 'result' && msg.hasOwnProperty('error') && msg.error.error === 403) {
+        globalDataService.currentUser = 'LOGIN_ERROR:' + msg.error.reason;
       } else if (msg.msg === 'added' && msg.collection === 'userActivities') {
         globalDataService.addData({id: msg.id, data: msg.fields});
       } else if (msg.msg === 'result' && msg.id === '-1') {
