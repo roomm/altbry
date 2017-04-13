@@ -1,5 +1,5 @@
 angular.module('altbry')
-  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService, globalFunctions) {
+  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService, globalFunctions, $timeout) {
     var vm = this;
 
     // Global variables
@@ -211,6 +211,7 @@ angular.module('altbry')
       // 'downhill_avg_bpm',
       // 'downhill_avg_rpm'
     ];
+    vm.selectedGroupDistance = '1000';
 
     //<editor-fold desc="LOGIN">
     // User Logging data check
@@ -240,6 +241,8 @@ angular.module('altbry')
     // Get Activity List (for calendar)
     websocketFactory.send({msg: 'sub', id: 'cGwhAYagRg47GLiK5', name: 'activityList', 'params': []});
 
+    //<editor-fold desc="Watchers">
+
     // Every received activity is pushed to calendar
     $scope.$watchCollection(function () {
       return globalDataService.activityList;
@@ -261,10 +264,13 @@ angular.module('altbry')
         vm.loadMap();
         vm.loadMainChart();
         vm.loadHeartRateChart();
-        vm.loadRhythmChart();
+        vm.loadRhythmChart(1000);
       }
     });
 
+    //</editor-fold>
+
+    //<editor-fold desc="Chart Config">
     // Calendar config
     vm.calendarConfig = {
       calendar: {
@@ -384,7 +390,7 @@ angular.module('altbry')
         type: 'pie'
       },
       title: {
-        text: ''
+        text: 'Ritmo Cardíaco'
       },
       tooltip: {
         // pointFormat: '<b>{point.percentage:.1f}%</b>'
@@ -409,7 +415,7 @@ angular.module('altbry')
       },
       series: [
         {
-          name: 'Frecuencia cardiaca',
+          name: 'Frecuencia cardíaca',
           colorByPoint: true,
           data: [
             {name: 'Zona 1', y: null, color: '#ffa8a3'},
@@ -433,9 +439,9 @@ angular.module('altbry')
         labels: {
           formatter: function () {
             if (this.isLast === true) {
-              return '<' + (this.value + 1);
+              return '<' + (this.value + 1) * (vm.selectedGroupDistance / 1000) + ' Km';
             }
-            return this.value + 1;
+            return (this.value + 1) * (vm.selectedGroupDistance / 1000) + ' Km';
           }
         }
       },
@@ -454,7 +460,7 @@ angular.module('altbry')
       tooltip: {
         formatter: function () {
           var time = globalFunctions.formatSeconds(this.y);
-          var speed = 1 / (this.y / 3600);
+          var speed = 1 / ( ((this.y / vm.selectedGroupDistance) / 3600) * 1000);
           speed = Math.round(speed * 100) / 100;
 
           return 'Tiempo: <b>' + time + '</b><br>' +
@@ -470,11 +476,22 @@ angular.module('altbry')
       ]
     };
 
+    //</editor-fold>
+
+    vm.changedTab = changedTab;
     vm.fieldFilter = fieldFilter;
     vm.loadMap = loadMap;
     vm.loadMainChart = loadMainChart;
     vm.loadHeartRateChart = loadHeartRateChart;
     vm.loadRhythmChart = loadRhythmChart;
+
+    function changedTab() {
+      if (typeof vm.rhythmChartConfig.getChartObj === 'function') {
+        $timeout(function () {
+          vm.rhythmChartConfig.getChartObj().reflow();
+        }, 50);
+      }
+    }
 
     function fieldFilter(item) {
       return item.transform(vm.selectedSummary[item.field]) !== 0;
@@ -584,7 +601,7 @@ angular.module('altbry')
 
     }
 
-    function loadRhythmChart() {
+    function loadRhythmChart(distanceGroup) {
       var previousPoint = null;
       var rythms = [];
       globalDataService.selectedActivity.result.samples.forEach(function (item) {
@@ -595,7 +612,7 @@ angular.module('altbry')
         if (previousPoint === null) {
           previousPoint = item;
         } else {
-          if (item.distance - previousPoint.distance > 1000) {
+          if (item.distance - previousPoint.distance >= distanceGroup) {
             rythms.push(item.timestamp - previousPoint.timestamp);
             previousPoint = null;
           }

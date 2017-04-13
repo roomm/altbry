@@ -49,23 +49,47 @@
   <div class="row" ng-if="vm.selectedSummary!==undefined">
     <div class="col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class="panel-title">Analisis</h4>
-        </div>
         <div class="panel-body">
           <div class="row">
             <div class="col-md-12">
-              <highchart id="mainAnalysis" config="vm.mainAnalysisChartConfig"></highchart>
+              <uib-tabset active="activeJustified" justified="true">
+                <uib-tab index="0" heading="Análisis" select="vm.changedTab()">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <highchart id="mainAnalysis" config="vm.mainAnalysisChartConfig"></highchart>
+                    </div>
+                  </div>
+                </uib-tab>
+                <uib-tab index="1" heading="Vueltas" select="vm.changedTab()">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <highchart id="rhythmAnalysis" config="vm.rhythmChartConfig"></highchart>
+                    </div>
+                    <div class="col-md-12 text-center">
+                      <label for="distance-group-select">Distancia </label>
+                      <select id="distance-group-select" ng-model="vm.selectedGroupDistance" ng-change="vm.loadRhythmChart(vm.selectedGroupDistance)">
+                        <option value="1000">1 Km</option>
+                        <option value="5000">5 km</option>
+                        <option value="10000">10 km</option>
+                        <option value="15000">15 km</option>
+                      </select>
+                    </div>
+                  </div>
+                </uib-tab>
+              </uib-tabset>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" ng-if="vm.selectedSummary!==undefined">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
           <div class="row">
             <div class="col-md-12">
               <highchart id="hrAnalysis" config="vm.heartRateChartConfig"></highchart>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <highchart id="rhythmAnalysis" config="vm.rhythmChartConfig"></highchart>
             </div>
           </div>
         </div>
