@@ -212,8 +212,7 @@ angular.module('altbry')
       // 'downhill_avg_rpm'
     ];
     vm.selectedGroupDistance = '1000';
-    vm.mapPoints = [];
-
+    vm.markerPosition = undefined;
     //<editor-fold desc="LOGIN">
     // User Logging data check
     if (localStorageService.get('userlogged')) {
@@ -359,8 +358,10 @@ angular.module('altbry')
         series: {
           point: {
             events: {
-              mouseOver: function () {
-                console.log(vm.mapPoints[this.index]);
+              click: function () {
+                var pos = vm.mapConfig.routePoints[this.index];
+                vm.markerPosition = pos[0] + ',' + pos[1];
+                console.log(vm.markerPosition);
               }
             }
           }
@@ -544,7 +545,6 @@ angular.module('altbry')
       var startTime = globalDataService.selectedActivity.result.samples[0].timestamp;
 
       globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
-        vm.mapPoints.push({lat: item.position_lat, lng: item.position_long});
 
         var time = item.timestamp - startTime;
         xaxis.push(globalFunctions.formatSeconds(time));
