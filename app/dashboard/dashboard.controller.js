@@ -309,6 +309,9 @@ angular.module('altbry')
 
     // Main Chart Config
     vm.mainAnalysisChartConfig = {
+      credits: {
+        enabled: false
+      },
       chart: {
         zoomType: 'xy'
       },
@@ -395,6 +398,9 @@ angular.module('altbry')
 
     //Heartrate Config
     vm.heartRateChartConfig = {
+      credits: {
+        enabled: false
+      },
       chart: {
         plotBackgroundColor: null,
         plotBorderWidth: null,
@@ -441,6 +447,9 @@ angular.module('altbry')
     };
 
     vm.rhythmChartConfig = {
+      credits: {
+        enabled: false
+      },
       title: {
         text: ''
       },
