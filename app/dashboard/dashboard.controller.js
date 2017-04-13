@@ -212,6 +212,7 @@ angular.module('altbry')
       // 'downhill_avg_rpm'
     ];
     vm.selectedGroupDistance = '1000';
+    vm.mapPoints = [];
 
     //<editor-fold desc="LOGIN">
     // User Logging data check
@@ -351,6 +352,17 @@ angular.module('altbry')
       tooltip: {
         shared: true
       },
+      plotOptions: {
+        series: {
+          point: {
+            events: {
+              mouseOver: function () {
+                console.log(vm.mapPoints[this.index]);
+              }
+            }
+          }
+        }
+      },
       series: [
         {
           type: 'area',
@@ -485,6 +497,7 @@ angular.module('altbry')
     vm.loadHeartRateChart = loadHeartRateChart;
     vm.loadRhythmChart = loadRhythmChart;
 
+    //<editor-fold desc="Public Functions">
     function changedTab() {
       if (typeof vm.rhythmChartConfig.getChartObj === 'function') {
         $timeout(function () {
@@ -522,6 +535,8 @@ angular.module('altbry')
       var startTime = globalDataService.selectedActivity.result.samples[0].timestamp;
 
       globalDataService.selectedActivity.result.samples.forEach(function (item, index) {
+        vm.mapPoints.push({lat: item.position_lat, lng: item.position_long});
+
         var time = item.timestamp - startTime;
         xaxis.push(globalFunctions.formatSeconds(time));
         // Add altitude to chart
@@ -623,6 +638,8 @@ angular.module('altbry')
       rythms.push(lastItem.timestamp - previousPoint.timestamp);
       vm.rhythmChartConfig.series[0].data = rythms;
     }
+
+    //</editor-fold>
 
   });
 
