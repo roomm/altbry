@@ -213,12 +213,18 @@ angular.module('altbry')
     ];
     vm.selectedGroupDistance = '1000';
     vm.markerPosition = undefined;
+    vm.selectedTab = 0;
     //<editor-fold desc="LOGIN">
     // User Logging data check
     if (localStorageService.get('userlogged')) {
       var userlogged = localStorageService.get('userlogged');
       websocketFactory.send({msg: 'connect', version: '1', support: ['1', 'pre2', 'pre1']});
-      websocketFactory.send({msg: 'method', method: 'login', params: [{user: {email: userlogged.user}, password: {digest: userlogged.pass, algorithm: 'sha-256'}}], id: '2'});
+      websocketFactory.send({
+        msg: 'method',
+        method: 'login',
+        params: [{user: {email: userlogged.user}, password: {digest: userlogged.pass, algorithm: 'sha-256'}}],
+        id: '2'
+      });
     } else {
       $state.go('login');
     }
@@ -248,7 +254,13 @@ angular.module('altbry')
       return globalDataService.activityList;
     }, function () {
       globalDataService.activityList.forEach(function (item) {
-        var activity = {title: item.data.name, start: new Date(item.data.local_start_time * 1000), id: item.id, summary: item.data.summary, stick: true};
+        var activity = {
+          title: item.data.name,
+          start: new Date(item.data.local_start_time * 1000),
+          id: item.id,
+          summary: item.data.summary,
+          stick: true
+        };
         if (!globalDataService.containsObject(activity, vm.calendarActivityList[0])) {
           vm.calendarActivityList[0].push(activity);
         }
@@ -361,6 +373,10 @@ angular.module('altbry')
               click: function () {
                 var pos = vm.mapConfig.routePoints[this.index];
                 vm.markerPosition = pos[0] + ',' + pos[1];
+                vm.selectedTab = (vm.selectedTab===1)?0:1;
+                $timeout(function () {
+                  vm.selectedTab = (vm.selectedTab===1)?0:1;
+                },100);
                 console.log(vm.markerPosition);
               }
             }
@@ -508,7 +524,8 @@ angular.module('altbry')
     vm.loadRhythmChart = loadRhythmChart;
 
     //<editor-fold desc="Public Functions">
-    function changedTab() {
+    function changedTab(indx) {
+      vm.selectedTab = indx;
       if (typeof vm.rhythmChartConfig.getChartObj === 'function') {
         $timeout(function () {
           vm.rhythmChartConfig.getChartObj().reflow();

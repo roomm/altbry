@@ -53,15 +53,15 @@
         <div class="panel-body">
           <div class="row">
             <div class="col-md-12">
-              <uib-tabset active="activeJustified" justified="true">
-                <uib-tab index="0" heading="Análisis" select="vm.changedTab()">
+              <uib-tabset active="vm.selectedTab" justified="true">
+                <uib-tab index="0" heading="Análisis" select="vm.changedTab(0)">
                   <div class="row">
                     <div class="col-md-12">
                       <highchart id="mainAnalysis" config="vm.mainAnalysisChartConfig"></highchart>
                     </div>
                   </div>
                 </uib-tab>
-                <uib-tab index="1" heading="Vueltas" select="vm.changedTab()">
+                <uib-tab index="1" heading="Vueltas" select="vm.changedTab(1)">
                   <div class="row">
                     <div class="col-md-12">
                       <highchart id="rhythmAnalysis" config="vm.rhythmChartConfig"></highchart>
