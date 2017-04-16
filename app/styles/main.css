@@ -63,3 +63,6 @@
   white-space: nowrap;
   line-height: 1;
 }
+.highcharts-markers.highcharts-tracker{
+  cursor: pointer;
+}

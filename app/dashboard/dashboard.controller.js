@@ -372,12 +372,14 @@ angular.module('altbry')
             events: {
               click: function () {
                 var pos = vm.mapConfig.routePoints[this.index];
-                vm.markerPosition = pos[0] + ',' + pos[1];
-                vm.selectedTab = (vm.selectedTab===1)?0:1;
-                $timeout(function () {
-                  vm.selectedTab = (vm.selectedTab===1)?0:1;
-                },100);
-                console.log(vm.markerPosition);
+                if (pos !== undefined) {
+                  // Workaround to fix marker position update
+                  vm.markerPosition = pos[0] + ',' + pos[1];
+                  vm.selectedTab = (vm.selectedTab === 1) ? 0 : 1;
+                  $timeout(function () {
+                    vm.selectedTab = (vm.selectedTab === 1) ? 0 : 1;
+                  }, 100);
+                }
               }
             }
           }
@@ -540,9 +542,14 @@ angular.module('altbry')
     function loadMap() {
       var totalSamples = globalDataService.selectedActivity.result.samples.length;
       var indexCenter = Math.round(totalSamples / 2);
-      var initialLat = globalDataService.selectedActivity.result.samples[indexCenter].position_lat;
-      var initialLng = globalDataService.selectedActivity.result.samples[indexCenter].position_long;
-      vm.mapConfig.center = initialLat + ', ' + initialLng;
+      var initialLat = undefined;
+      var initialLng = undefined;
+      while (initialLat === undefined && indexCenter < totalSamples) {
+        initialLat = globalDataService.selectedActivity.result.samples[indexCenter].position_lat;
+        initialLng = globalDataService.selectedActivity.result.samples[indexCenter].position_long;
+        vm.mapConfig.center = initialLat + ', ' + initialLng;
+        indexCenter++;
+      }
       vm.mapConfig.routePoints = [];
       var points = [];
       globalDataService.selectedActivity.result.samples.forEach(function (item) {
