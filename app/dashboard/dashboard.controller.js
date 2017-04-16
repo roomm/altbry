@@ -373,12 +373,8 @@ angular.module('altbry')
               click: function () {
                 var pos = vm.mapConfig.routePoints[this.index];
                 if (pos !== undefined) {
-                  // Workaround to fix marker position update
                   vm.markerPosition = pos[0] + ',' + pos[1];
-                  vm.selectedTab = (vm.selectedTab === 1) ? 0 : 1;
-                  $timeout(function () {
-                    vm.selectedTab = (vm.selectedTab === 1) ? 0 : 1;
-                  }, 100);
+                  $scope.$apply();
                 }
               }
             }
@@ -527,7 +523,6 @@ angular.module('altbry')
 
     //<editor-fold desc="Public Functions">
     function changedTab(indx) {
-      vm.selectedTab = indx;
       if (typeof vm.rhythmChartConfig.getChartObj === 'function') {
         $timeout(function () {
           vm.rhythmChartConfig.getChartObj().reflow();

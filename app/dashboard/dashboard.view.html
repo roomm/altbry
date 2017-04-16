@@ -54,14 +54,14 @@
           <div class="row">
             <div class="col-md-12">
               <uib-tabset active="vm.selectedTab" justified="true">
-                <uib-tab index="0" heading="Análisis" select="vm.changedTab(0)">
+                <uib-tab index="0" heading="Análisis" select="vm.changedTab()">
                   <div class="row">
                     <div class="col-md-12">
                       <highchart id="mainAnalysis" config="vm.mainAnalysisChartConfig"></highchart>
                     </div>
                   </div>
                 </uib-tab>
-                <uib-tab index="1" heading="Vueltas" select="vm.changedTab(1)">
+                <uib-tab index="1" heading="Vueltas" select="vm.changedTab()">
                   <div class="row">
                     <div class="col-md-12">
                       <highchart id="rhythmAnalysis" config="vm.rhythmChartConfig"></highchart>
