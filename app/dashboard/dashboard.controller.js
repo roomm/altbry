@@ -1,5 +1,5 @@
 angular.module('altbry')
-  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService, globalFunctions, $timeout) {
+  .controller('dashboardController', function ($state, $scope, globalDataService, websocketFactory, localStorageService, globalFunctions, $timeout, $http) {
     var vm = this;
 
     // Global variables
@@ -277,6 +277,7 @@ angular.module('altbry')
         vm.loadMainChart();
         vm.loadHeartRateChart();
         vm.loadRhythmChart(1000);
+        vm.loadIbpAnalysis();
       }
     });
 
@@ -520,9 +521,10 @@ angular.module('altbry')
     vm.loadMainChart = loadMainChart;
     vm.loadHeartRateChart = loadHeartRateChart;
     vm.loadRhythmChart = loadRhythmChart;
+    vm.loadIbpAnalysis = loadIbpAnalysis;
 
     //<editor-fold desc="Public Functions">
-    function changedTab(indx) {
+    function changedTab() {
       if (typeof vm.rhythmChartConfig.getChartObj === 'function') {
         $timeout(function () {
           vm.rhythmChartConfig.getChartObj().reflow();
@@ -665,6 +667,49 @@ angular.module('altbry')
       var lastItem = globalDataService.selectedActivity.result.samples[globalDataService.selectedActivity.result.samples.length - 1];
       rythms.push(lastItem.timestamp - previousPoint.timestamp);
       vm.rhythmChartConfig.series[0].data = rythms;
+    }
+
+    function loadIbpAnalysis() {
+
+      var gpx = '<?xml version="1.0" encoding="UTF-8"?><gpx creator="AlBryGPX" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">';
+
+      var date = new Date(null);
+      date.setSeconds(globalDataService.selectedActivity.result.local_start_time);
+      gpx += '<metadata><time>' + date.toISOString() + '</time></metadata>';
+      gpx += '<trk><name>Ride</name><trkseg>';
+      globalDataService.selectedActivity.result.samples.forEach(function (item) {
+
+        var pointDate = new Date(null);
+        pointDate.setSeconds(item.timestamp);
+
+        gpx += '<trkpt lat="' + item.position_lat + '" lon="' + item.position_long + '">' +
+          '<ele>' + item.altitude + '</ele>' +
+          '<time>' + pointDate.toISOString() + '</time>' +
+          '<extensions>' +
+          '<gpxtpx:TrackPointExtension>' +
+          '<gpxtpx:atemp>' + item.temperature + '</gpxtpx:atemp>' +
+          '<gpxtpx:hr>' + item.heart_rate + '</gpxtpx:hr>' +
+          '</gpxtpx:TrackPointExtension>' +
+          '</extensions>' +
+          '</trkpt>';
+      });
+
+      gpx += '</trkseg></trk></gpx>';
+
+
+      var fd = new FormData();
+      var blob = new Blob([gpx], {type: 'text/xml'});
+      var file = new File([blob], 'ride.gpx');
+      fd.append('file', file);
+      fd.append('key', '####');
+
+      $http.post('http://www.ibpindex.com/api/', fd, {
+        headers: {'Content-Type': undefined}
+      }).then(function (response) {
+        console.log(response);
+      }, function (response) {
+        console.log('ERROR', response);
+      });
     }
 
     //</editor-fold>
