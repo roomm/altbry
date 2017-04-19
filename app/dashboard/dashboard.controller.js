@@ -371,10 +371,11 @@ angular.module('altbry')
         series: {
           point: {
             events: {
-              click: function () {
+              mouseOver: function () {
                 var pos = vm.mapConfig.routePoints[this.index];
                 if (pos !== undefined) {
                   vm.markerPosition = pos[0] + ',' + pos[1];
+                  vm.mapConfig.center =pos[0] + ',' + pos[1];
                   $scope.$apply();
                 }
               }
