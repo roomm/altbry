@@ -7,7 +7,6 @@
  * Main module of the application.
  */
 angular.module('altbry', [
-  'environment',
   'LocalStorageModule',
   'oc.lazyLoad',
   'ngResource',

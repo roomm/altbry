@@ -1,6 +1,0 @@
-{
-  "constants": {
-    "ENV": "production",
-    "API": "http://api.taggeator.delectame.com"
-  }
-}
