@@ -8,7 +8,7 @@ angular.module('altbry')
     vm.summaryFields = [
       {
         field: 'total_elapsed_time',
-        icon: '/images/icons/chrono.png',
+        icon: '/images/chrono.png',
         name: 'duracion',
         transform: function (value) {
           return globalFunctions.formatSeconds(value);
@@ -17,7 +17,7 @@ angular.module('altbry')
       },
       {
         field: 'total_moving_time',
-        icon: '/images/icons/chrono.png',
+        icon: '/images/chrono.png',
         name: 'tiempo en mov.',
         transform: function (value) {
           return globalFunctions.formatSeconds(value);
@@ -26,7 +26,7 @@ angular.module('altbry')
       },
       {
         field: 'total_distance',
-        icon: '/images/icons/distance.png',
+        icon: '/images/distance.png',
         name: 'distancia',
         transform: function (value) {
           var dist = value / 1000;
@@ -36,7 +36,7 @@ angular.module('altbry')
       },
       {
         field: 'avg_speed',
-        icon: '/images/icons/speedavg.png',
+        icon: '/images/speedavg.png',
         name: 'vel. media',
         transform: function (value) {
           var vel = value * 3.6;
@@ -46,7 +46,7 @@ angular.module('altbry')
       },
       {
         field: 'max_speed',
-        icon: '/images/icons/speedmax.png',
+        icon: '/images/speedmax.png',
         name: 'vel. max.',
         transform: function (value) {
           var vel = value * 3.6;
@@ -56,7 +56,7 @@ angular.module('altbry')
       },
       {
         field: 'avg_heart_rate',
-        icon: '/images/icons/heartrate.png',
+        icon: '/images/heartrate.png',
         name: 'fc media',
         transform: function (value) {
           return value;
@@ -65,7 +65,7 @@ angular.module('altbry')
       },
       {
         field: 'max_heart_rate',
-        icon: '/images/icons/heartrate.png',
+        icon: '/images/heartrate.png',
         name: 'fc max.',
         transform: function (value) {
           return value;
@@ -128,7 +128,7 @@ angular.module('altbry')
       },
       {
         field: 'total_ascent',
-        icon: '/images/icons/hillup.png',
+        icon: '/images/hillup.png',
         name: 'ascenso',
         transform: function (value) {
           return value;
@@ -137,7 +137,7 @@ angular.module('altbry')
       },
       {
         field: 'total_descent',
-        icon: '/images/icons/hilldown.png',
+        icon: '/images/hilldown.png',
         name: 'descenso',
         transform: function (value) {
           return value;
@@ -146,7 +146,7 @@ angular.module('altbry')
       },
       {
         field: 'max_altitude',
-        icon: '/images/icons/altitudemax.png',
+        icon: '/images/altitudemax.png',
         name: 'altitud máx.',
         transform: function (value) {
           return Math.round(value * 100) / 100;
@@ -155,7 +155,7 @@ angular.module('altbry')
       },
       {
         field: 'min_altitude',
-        icon: '/images/icons/altitudemin.png',
+        icon: '/images/altitudemin.png',
         name: 'altitud mín',
         transform: function (value) {
           return Math.round(value * 100) / 100;
@@ -164,7 +164,7 @@ angular.module('altbry')
       },
       {
         field: 'max_temperature',
-        icon: '/images/icons/tempmax.png',
+        icon: '/images/tempmax.png',
         name: 'temp. máx',
         transform: function (value) {
           return value;
@@ -173,7 +173,7 @@ angular.module('altbry')
       },
       {
         field: 'min_temperature',
-        icon: '/images/icons/tempmin.png',
+        icon: '/images/tempmin.png',
         name: 'temp. mín.',
         transform: function (value) {
           return value;
@@ -182,7 +182,7 @@ angular.module('altbry')
       },
       {
         field: 'avg_temperature',
-        icon: '/images/icons/tempavg.png',
+        icon: '/images/tempavg.png',
         name: 'temp. media',
         transform: function (value) {
           return value;
@@ -191,7 +191,7 @@ angular.module('altbry')
       },
       {
         field: 'total_calories',
-        icon: '/images/icons/calories.png',
+        icon: '/images/calories.png',
         name: 'calorías',
         transform: function (value) {
           return value;
