@@ -213,7 +213,10 @@ angular.module('altbry')
     ];
     vm.selectedGroupDistance = '1000';
     vm.markerPosition = undefined;
-    vm.selectedTab = 0;
+    vm.ibpAnalysis = undefined;
+    vm.ibpFit = undefined;
+    vm.globalFuncs = globalFunctions;
+
     //<editor-fold desc="LOGIN">
     // User Logging data check
     if (localStorageService.get('userlogged')) {
@@ -375,7 +378,7 @@ angular.module('altbry')
                 var pos = vm.mapConfig.routePoints[this.index];
                 if (pos !== undefined) {
                   vm.markerPosition = pos[0] + ',' + pos[1];
-                  vm.mapConfig.center =pos[0] + ',' + pos[1];
+                  vm.mapConfig.center = pos[0] + ',' + pos[1];
                   $scope.$apply();
                 }
               }
@@ -419,13 +422,10 @@ angular.module('altbry')
         enabled: false
       },
       chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false,
         type: 'pie'
       },
       title: {
-        text: 'Ritmo Cardíaco'
+        text: ''
       },
       tooltip: {
         // pointFormat: '<b>{point.percentage:.1f}%</b>'
@@ -514,6 +514,52 @@ angular.module('altbry')
       ]
     };
 
+    vm.ibpKmAnalysisChartConfig = {
+      credits: {
+        enabled: false
+      },
+      chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+      },
+      title: {
+        text: 'Distribución %'
+      },
+      tooltip: {
+        // pointFormat: '<b>{point.percentage:.1f}%</b>'
+        pointFormatter: function () {
+          return 'Porcentaje: <b>' + Math.round(this.percentage * 100) / 100 + '</b><br>';
+        }
+      },
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Distribución %',
+          colorByPoint: true,
+          data: [
+            {name: 'Entre 1 y 5%', y: null, color: '#f77d76'},
+            {name: 'Entre 5 y 10%', y: null, color: '#ef554c'},
+            {name: 'Entre 10 y 15%', y: null, color: '#e72f25'},
+            {name: 'Entre 15 y 30%', y: null, color: '#a80c00'},
+            {name: 'Desniveles del 1%', y: null, color: '#1f7827'},
+            {name: 'Entre 1 y 5%', y: null, color: '#8594dd'},
+            {name: 'Entre 5 y 10%', y: null, color: '#5d6ca8'},
+            {name: 'Entre 10 y 15%', y: null, color: '#4348a8'},
+            {name: 'Entre 15 y 30%', y: null, color: '#202ca8'}
+          ]
+        }]
+    };
     //</editor-fold>
 
     vm.changedTab = changedTab;
@@ -522,6 +568,7 @@ angular.module('altbry')
     vm.loadMainChart = loadMainChart;
     vm.loadHeartRateChart = loadHeartRateChart;
     vm.loadRhythmChart = loadRhythmChart;
+    vm.loadIbpKmAnalysisChart = loadIbpKmAnalysisChart;
     vm.loadIbpAnalysis = loadIbpAnalysis;
 
     //<editor-fold desc="Public Functions">
@@ -540,8 +587,8 @@ angular.module('altbry')
     function loadMap() {
       var totalSamples = globalDataService.selectedActivity.result.samples.length;
       var indexCenter = Math.round(totalSamples / 2);
-      var initialLat = undefined;
-      var initialLng = undefined;
+      var initialLat;
+      var initialLng;
       while (initialLat === undefined && indexCenter < totalSamples) {
         initialLat = globalDataService.selectedActivity.result.samples[indexCenter].position_lat;
         initialLng = globalDataService.selectedActivity.result.samples[indexCenter].position_long;
@@ -670,6 +717,18 @@ angular.module('altbry')
       vm.rhythmChartConfig.series[0].data = rythms;
     }
 
+    function loadIbpKmAnalysisChart() {
+      vm.ibpKmAnalysisChartConfig.series[0].data[0].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb15_30km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[1].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb10_15km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[2].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb5_10km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[3].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb1_5km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[4].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb1_1km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[5].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb5_1km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[6].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb10_5km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[7].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb15_10km);
+      vm.ibpKmAnalysisChartConfig.series[0].data[8].y = parseFloat(vm.ibpAnalysis.bicycle.perclimb30_15km);
+    }
+
     function loadIbpAnalysis() {
 
       var gpx = '<?xml version="1.0" encoding="UTF-8"?><gpx creator="AlBryGPX" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">';
@@ -679,10 +738,8 @@ angular.module('altbry')
       gpx += '<metadata><time>' + date.toISOString() + '</time></metadata>';
       gpx += '<trk><name>Ride</name><trkseg>';
       globalDataService.selectedActivity.result.samples.forEach(function (item) {
-
         var pointDate = new Date(null);
         pointDate.setSeconds(item.timestamp);
-
         gpx += '<trkpt lat="' + item.position_lat + '" lon="' + item.position_long + '">' +
           '<ele>' + item.altitude + '</ele>' +
           '<time>' + pointDate.toISOString() + '</time>' +
@@ -694,9 +751,7 @@ angular.module('altbry')
           '</extensions>' +
           '</trkpt>';
       });
-
       gpx += '</trkseg></trk></gpx>';
-
 
       var fd = new FormData();
       var blob = new Blob([gpx], {type: 'text/xml'});
@@ -707,7 +762,9 @@ angular.module('altbry')
       $http.post('http://www.ibpindex.com/api/', fd, {
         headers: {'Content-Type': undefined}
       }).then(function (response) {
-        console.log(response);
+        vm.ibpAnalysis = response.data;
+        vm.ibpFit = (vm.ibpAnalysis.bicycle.ibpfit === '9999') ? '-' : vm.ibpAnalysis.bicycle.ibpfit;
+        vm.loadIbpKmAnalysisChart();
       }, function (response) {
         console.log('ERROR', response);
       });

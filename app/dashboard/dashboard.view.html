@@ -43,15 +43,7 @@
               </ng-map>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row" ng-if="vm.selectedSummary!==undefined">
-    <div class="col-md-12">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div class="row">
+          <div class="row" style="margin-top: 15px;">
             <div class="col-md-12">
               <uib-tabset active="vm.selectedTab" justified="true">
                 <uib-tab index="0" heading="Análisis" select="vm.changedTab()">
@@ -87,10 +79,177 @@
   <div class="row" ng-if="vm.selectedSummary!==undefined">
     <div class="col-md-12">
       <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">Análisis Ritmo Cardíaco</h4>
+        </div>
         <div class="panel-body">
           <div class="row">
             <div class="col-md-12">
               <highchart id="hrAnalysis" config="vm.heartRateChartConfig"></highchart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" ng-if="vm.selectedSummary!==undefined">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">IBP Index <a href="http://www.ibpindex.com/index.php/es/#zt-userwrap6-inner" target="_blank"><i class="fa fa-question-circle"></i></a></h3>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="page-header">
+                <h4><b>IBP Perfomance</b></h4>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <b>IBP Index <i popover-title="Información" popover-class="ibp-popover" popover-placement="right" uib-popover-template="'ibpInfoTemplate.html'" class="fa fa-info-circle" style="cursor: pointer"></i> </b>: <span class="big">{{vm.ibpAnalysis.bicycle.ibp}}</span>
+                  <script type="text/ng-template" id="ibpInfoTemplate.html">
+                    <img class="img-responsive" src="images/tabla_ibp_es.jpg"/>
+                  </script>
+                </li>
+                <li class="list-group-item">
+                  <b>IBP Fit</b>: <span class="big">{{ vm.ibpFit}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="page-header">
+                <h4><b>Análisis de desnivel</b></h4>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <table class="table table-responsive">
+                <thead>
+                <tr>
+                  <th>Subidas</th>
+                  <th>Distancia Km</th>
+                  <th>%</th>
+                  <th>Velocidad</th>
+                  <th>Tiempo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td>Entre 15 y 30%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb15_30km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb15_30km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb15_30km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb15_30km/vm.ibpAnalysis.bicycle.speedclimb15_30km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <td>Entre 10 y 15%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb10_15km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb10_15km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb10_15km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb10_15km/vm.ibpAnalysis.bicycle.speedclimb10_15km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <td>Entre 5 y 10%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb5_10km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb5_10km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb5_10km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb5_10km/vm.ibpAnalysis.bicycle.speedclimb5_10km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <td>Entre 1 y 5%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb1_5km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb1_5km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb1_5km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb1_5km/vm.ibpAnalysis.bicycle.speedclimb1_5km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <th colspan="5">Llano</th>
+                </tr>
+                <tr>
+                  <td>Desniveles del 1%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb1_1km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb1_1km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb1_1km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb1_1km/vm.ibpAnalysis.bicycle.speedclimb1_1km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <th colspan="5">Bajadas</th>
+                </tr>
+                <tr>
+                  <td>Entre 1 y 5%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb5_1km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb5_1km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb5_1km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb5_1km/vm.ibpAnalysis.bicycle.speedclimb5_1km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <td>Entre 5 y 10%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb10_5km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb10_5km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb10_5km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb10_5km/vm.ibpAnalysis.bicycle.speedclimb10_5km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <td>Entre 10 y 15%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb15_10km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb15_10km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb15_10km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb15_10km/vm.ibpAnalysis.bicycle.speedclimb15_10km)*3600)}}</td>
+                </tr>
+                <tr>
+                  <td>Entre 15 y 30%</td>
+                  <td>{{vm.ibpAnalysis.bicycle.totclimb30_15km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.perclimb30_15km}}</td>
+                  <td>{{vm.ibpAnalysis.bicycle.speedclimb30_15km}}</td>
+                  <td>{{vm.globalFuncs.formatSeconds((vm.ibpAnalysis.bicycle.totclimb30_15km/vm.ibpAnalysis.bicycle.speedclimb30_15km)*3600)}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <highchart id="ibpKmAnalysis" config="vm.ibpKmAnalysisChartConfig"></highchart>
+            </div>
+          </div>
+          <div ng-if="vm.ibpAnalysis.bicycle.stops.length>0">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="page-header">
+                  <h4><b>Paradas</b></h4>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table table-responsive">
+                  <thead>
+                  <tr>
+                    <th>Distancia Km</th>
+                    <th>Tiempo parado</th>
+                    <th>Altura</th>
+                    <th>Tiempo desde salida</th>
+                    <th>Tiempo desde parada anterior</th>
+                    <th>Distancia a parada anterior</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr ng-repeat="stop in vm.ibpAnalysis.bicycle.stops track by $index">
+                    <td>{{stop.stopdistancekm}}</td>
+                    <td>{{stop.stoppedtime}}</td>
+                    <td>{{stop.stopaltitude}}</td>
+                    <td>{{stop.stopelaptime}}</td>
+                    <td>{{stop.stoplasttime}}</td>
+                    <td>{{stop.stoplastdist}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
