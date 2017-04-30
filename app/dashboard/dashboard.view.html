@@ -116,7 +116,16 @@
                   </script>
                 </li>
                 <li class="list-group-item">
-                  <b>IBP Fit</b>: <span class="big">{{ vm.ibpFit}}</span>
+                  <b>IBP Fit <i popover-title="Información" popover-class="ibp-popover" popover-placement="right" uib-popover-template="'ibpFitInfoTemplate.html'" class="fa fa-info-circle" style="cursor: pointer"></i></b>: <span class="big">{{ vm.ibpFit}}</span>
+                  <script type="text/ng-template" id="ibpFitInfoTemplate.html">
+                    <img class="img-responsive" src="images/tabla_ibp_fit_650_2.jpg"/>
+                    <p>Se han comparando los datos del entreno otros entrenos analizados en IBP Index.<br/>
+                      Con tu tiempo a {{vm.ibpAnalysis.averagespeed}} km/hm en una carrera con 100 participantes habrías quedado en la posición: {{vm.ibpFit}}</p>
+                  </script>
+
+                  <!--Se han encontrado 797 rutas con condiciones iguales a la tuya (±5%)-->
+                  <!--IBP = 61,   Distancia total	81.478 Km,   Desn. de subida acumulado	886 m-->
+                  <!--Con tu tiempo a 21.2 Km/h, en una carrera con 100 participantes habrías quedado en la posición: 34      IBP fit = 34-->
                 </li>
               </ul>
             </div>

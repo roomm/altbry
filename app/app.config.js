@@ -1,5 +1,5 @@
 angular.module('altbry')
-  .config(function ($httpProvider, $stateProvider, $urlRouterProvider, $ocLazyLoadProvider, localStorageServiceProvider, toastrConfig, cfpLoadingBarProvider) {
+  .config(function ($httpProvider, $stateProvider, $urlRouterProvider, localStorageServiceProvider, toastrConfig, cfpLoadingBarProvider) {
     // Add interceptors to "system"
     $httpProvider.interceptors.push('requestErrorNotifier');
 
@@ -15,11 +15,6 @@ angular.module('altbry')
       positionClass: 'toast-top-full-width'
     });
 
-    $ocLazyLoadProvider.config({
-      debug: false,
-      events: true
-    });
-
     $urlRouterProvider.otherwise('/login');
 
     $stateProvider
@@ -27,55 +22,19 @@ angular.module('altbry')
         url: '/login',
         templateUrl: 'login/login.view.html',
         controller: 'loginController',
-        controllerAs: 'vm',
-        resolve: {
-          loadMyFiles: function ($ocLazyLoad) {
-            return $ocLazyLoad.load(
-              {
-                name: 'altbry',
-                files: [
-                  'login/login.controller.js'
-                ]
-              }
-            );
-          }
-        }
+        controllerAs: 'vm'
       })
       .state('main', {
         url: '/altbry',
         controller: 'navigationController',
         controllerAs: 'vm',
-        templateUrl: 'navbar/navbar.view.html',
-        resolve: {
-          loadMyFiles: function ($ocLazyLoad) {
-            return $ocLazyLoad.load(
-              {
-                name: 'altbry',
-                files: [
-                  'navbar/navbar.controller.js'
-                ]
-              }
-            );
-          }
-        }
+        templateUrl: 'navbar/navbar.view.html'
       })
       .state('main.dashboard', {
         url: '/dashboard',
         templateUrl: 'dashboard/dashboard.view.html',
         controller: 'dashboardController',
-        controllerAs: 'vm',
-        resolve: {
-          loadMyFiles: function ($ocLazyLoad) {
-            return $ocLazyLoad.load(
-              {
-                name: 'altbry',
-                files: [
-                  'dashboard/dashboard.controller.js'
-                ]
-              }
-            );
-          }
-        }
+        controllerAs: 'vm'
       });
   });
 

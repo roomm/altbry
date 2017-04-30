@@ -8,7 +8,6 @@
  */
 angular.module('altbry', [
   'LocalStorageModule',
-  'oc.lazyLoad',
   'ngResource',
   'ui.router',
   'ui.bootstrap',

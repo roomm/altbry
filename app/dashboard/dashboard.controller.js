@@ -757,9 +757,9 @@ angular.module('altbry')
       var blob = new Blob([gpx], {type: 'text/xml'});
       var file = new File([blob], 'ride.gpx');
       fd.append('file', file);
-      fd.append('key', '####');
+      fd.append('key', '');
 
-      $http.post('http://www.ibpindex.com/api/', fd, {
+      $http.post('https://www.ibpindex.com/api/', fd, {
         headers: {'Content-Type': undefined}
       }).then(function (response) {
         vm.ibpAnalysis = response.data;
